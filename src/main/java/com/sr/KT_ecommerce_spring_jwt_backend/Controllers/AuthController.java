@@ -22,4 +22,9 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> register(@RequestBody Users users){
         return service.saveUser(users);
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Users users){
+       return service.login(users);
+    }
 }

@@ -4,8 +4,13 @@ import com.sr.KT_ecommerce_spring_jwt_backend.Entity.Users;
 import com.sr.KT_ecommerce_spring_jwt_backend.Repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +19,29 @@ import java.util.Map;
 public class UserService {
     @Autowired
     UserRepo userRepo;
+
+    @Autowired
+    JwtService service;
+
+    @Autowired
+    AuthenticationManager manager;
+
+
+
+    public String login(Users user){
+
+
+        Authentication authentication = manager.authenticate(
+            new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword())
+        );
+
+        if(authentication.isAuthenticated()){
+            return service.createJwt(user.getUsername());
+        }
+        else {
+            return "fail";
+        }
+    }
 
 
 
