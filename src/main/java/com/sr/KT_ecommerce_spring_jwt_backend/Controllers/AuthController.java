@@ -24,7 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users users){
+    public ResponseEntity<Map<String, String>> login(@RequestBody Users users){
        return service.login(users);
     }
 }

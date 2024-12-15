@@ -1,5 +1,6 @@
 package com.sr.KT_ecommerce_spring_jwt_backend.Config;
 
+import com.sr.KT_ecommerce_spring_jwt_backend.Filter.JwtFilter;
 import com.sr.KT_ecommerce_spring_jwt_backend.Service.KtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,20 +24,29 @@ public class SecurityConfig {
     @Autowired
     KtUserDetailsService userDetailsService;
 
+    @Autowired
+    JwtFilter filter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception{
 
-        security.httpBasic(Customizer.withDefaults())
-                .sessionManagement(
-                        customizer ->
-                                customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf( customizer -> customizer.disable())
-                .authorizeHttpRequests( request->
-                        request.requestMatchers("/auth/**").permitAll().anyRequest().authenticated());
-
+        security.authorizeHttpRequests( request ->
+                        request.requestMatchers("/auth/**").permitAll()
+                                .anyRequest().authenticated()
+                ).csrf(customizer->customizer.disable())
+                .sessionManagement
+                        (
+                                sec ->
+                                        sec.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        )
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
+        ;
 
 
         return security.build();
+
     }
 
     @Bean

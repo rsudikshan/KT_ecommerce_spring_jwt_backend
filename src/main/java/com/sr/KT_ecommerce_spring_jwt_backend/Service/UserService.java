@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,9 @@ public class UserService {
 
 
 
-    public String login(Users user){
+    public ResponseEntity<Map<String,String>> login(Users user){
+
+        Map<String,String> map = new HashMap<>();
 
 
         Authentication authentication = manager.authenticate(
@@ -36,10 +39,13 @@ public class UserService {
         );
 
         if(authentication.isAuthenticated()){
-            return service.createJwt(user.getUsername());
+            map.put("status","successful");
+            map.put("bearer ", service.createJwt(user.getUsername()));
+            return ResponseEntity.ok().body(map);
         }
         else {
-            return "fail";
+            map.put("status","unsuccessful");
+            return ResponseEntity.badRequest().body(map);
         }
     }
 
@@ -56,5 +62,10 @@ public class UserService {
         userRepo.save(users);
         return ResponseEntity.ok().body(status);
 
+    }
+
+    public Users loadByUsername(String username){
+
+        return userRepo.findByUsername(username);
     }
 }
