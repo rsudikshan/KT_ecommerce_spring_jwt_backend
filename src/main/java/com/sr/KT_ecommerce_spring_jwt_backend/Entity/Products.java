@@ -20,5 +20,5 @@ public class Products {
     public String productName;
     public String productPrice;
     public String category;
-
+    public String imageName;
 }
