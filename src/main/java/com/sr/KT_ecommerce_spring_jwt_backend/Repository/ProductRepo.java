@@ -1,12 +1,16 @@
 package com.sr.KT_ecommerce_spring_jwt_backend.Repository;
 
-import com.sr.KT_ecommerce_spring_jwt_backend.Entity.Products;
+import com.sr.KT_ecommerce_spring_jwt_backend.Entity.Product;
+import com.sr.KT_ecommerce_spring_jwt_backend.dto.ProductRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ProductRepo extends JpaRepository<Products,Long> {
+import java.util.List;
 
-    public Products findByProductName(String name);
+@Repository
+public interface ProductRepo extends JpaRepository<Product,Long> {
+
+    public List<Product> findByProductName(String name);
+    public List<Product> findByCategory(String category);
 
 }
